@@ -39,20 +39,9 @@ def audio_to_transcript(audio_file):
     transcript = result["text"]
     return transcript
 
-def text_to_news_article(text):
-    response = openai.Completion.create(
-    model="text-davinci-003",
-    prompt="Write a news article in 500 words from the below text:\n"+text,
-    temperature=0.7,
-    max_tokens=600,
-    top_p=1,
-    frequency_penalty=0,
-    presence_penalty=0
-    )
-    return response['choices'][0]['text']
 
 
-st.markdown('# 📝 **News Article Generator App**')
+st.markdown('# 📝 **Article Generator App**')
 
 st.header('Input the Video URL')
 
@@ -64,28 +53,9 @@ if st.checkbox('Start Analysis'):
     transcript = audio_to_transcript(audio_filename)
     st.header("Transcript are getting generated...")
     st.success(transcript)
-    st.header("News Article")
-    result = text_to_news_article(transcript)
-    st.success(result)
     
     #save the files
     transcript_txt = open('transcript.txt', 'w')
     transcript_txt.write(transcript)
     transcript_txt.close()  
-    
-    article_txt = open('article.txt', 'w')
-    article_txt.write(result) 
-    article_txt.close() 
-    
-    zip_file = ZipFile('output.zip', 'w')
-    zip_file.write('transcript.txt')
-    zip_file.write('article.txt')
-    zip_file.close()
-    
-    with open("output.zip", "rb") as zip_download:
-        btn = st.download_button(
-            label="Download ZIP",
-            data=zip_download,
-            file_name="output.zip",
-            mime="application/zip"
-        )
+     
