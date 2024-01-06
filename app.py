@@ -6,6 +6,8 @@ from pathlib import Path
 import shutil
 import whisper
 from dotenv import load_dotenv
+from zipfile import ZipFile 
+
 load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -50,7 +52,7 @@ def text_to_news_article(text):
     return response['choices'][0]['text']
 
 
-st.markdown('# 📝 **Article Generator App**')
+st.markdown('# 📝 **News Article Generator App**')
 
 st.header('Input the Video URL')
 
@@ -62,4 +64,29 @@ if st.checkbox('Start Analysis'):
     transcript = audio_to_transcript(audio_filename)
     st.header("Transcript are getting generated...")
     st.success(transcript)
+    st.header("News Article")
+    result = text_to_news_article(transcript)
+    st.success(result)
     
+    #save the files
+    transcript_txt = open('transcript.txt', 'w')
+    transcript_txt.write(transcript)
+    transcript_txt.close()  
+    
+    article_txt = open('article.txt', 'w')
+    article_txt.write(result) 
+    article_txt.close() 
+    
+    zip_file = ZipFile('output.zip', 'w')
+    zip_file.write('transcript.txt')
+    zip_file.write('article.txt')
+    zip_file.close()
+    
+    with open("output.zip", "rb") as zip_download:
+        btn = st.download_button(
+            label="Download ZIP",
+            data=zip_download,
+            file_name="output.zip",
+            mime="application/zip"
+        )
+
